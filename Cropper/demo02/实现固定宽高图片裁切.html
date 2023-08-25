@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>图片裁剪工具</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.11/cropper.min.css">
+    <style>
+        img {
+            width: 800px;
+            height: 500px;
+        }
+    </style>
+</head>
+<body>
+<div>
+    <img src="https://p1.ssl.qhimg.com/t019228fc2ed5df1aa8.jpg" id="image">
+</div>
+<button onclick="split()"> 裁剪 </button>
+<div>
+    <img id="cropped-result">
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.11/cropper.min.js"></script>
+<script>
+    var image = document.getElementById('image');
+    var fixedWidth = 300; // 设置裁剪结果的固定宽度
+    var fixedHeight = 200; // 设置裁剪结果的固定高度
+    var aspectRatio = fixedWidth / fixedHeight; // 计算宽高比
+
+    // 创建 Cropper 实例，设置宽高比，禁止移动和缩放裁剪框，禁止重新框选选取
+    var cropper = new Cropper(image, {
+        aspectRatio: aspectRatio,
+        cropBoxResizable: false, // 禁止用户调整裁剪框的宽高
+        zoomable: false, // 禁止缩放图片
+        dragMode: 'none' // 禁止重新框选选取
+    });
+
+    function split() {
+        // 获取裁剪结果（返回裁剪后的图像数据）
+        var croppedData = cropper.getCroppedCanvas({
+            width: fixedWidth,
+            height: fixedHeight
+        }).toDataURL('image/jpeg');
+        // 将裁剪结果显示在另一个元素中
+        var resultElement = document.getElementById('cropped-result');
+        resultElement.src = croppedData;
+    }
+</script>
+</body>
+</html>

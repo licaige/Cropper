@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>图片裁剪工具</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.11/cropper.min.css">
+    <style>
+        img {
+            width: 800px;
+            height: 500px;
+        }
+    </style>
+</head>
+
+<body>
+<div>
+    <img src="./t019228fc2ed5df1aa8.jpg" id="image">
+</div>
+<button onclick="save()"> 保存 </button>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.11/cropper.min.js"></script>
+<script>
+    var image = document.getElementById('image');
+    var fixedWidth = 300; // 设置裁剪结果的固定宽度
+    var fixedHeight = 200; // 设置裁剪结果的固定高度
+    var aspectRatio = fixedWidth / fixedHeight; // 计算宽高比
+
+    // 创建 Cropper 实例，设置宽高比，禁止移动和缩放裁剪框，禁止重新框选选取
+    var cropper = new Cropper(image, {
+        viewMode: 2 // 设置裁剪框在图像上的显示模式
+    });
+
+    function save() {
+        // 获取裁剪后的图片数据
+        var croppedCanvas = cropper.getCroppedCanvas();
+
+        // 将图片数据转换为Blob对象
+        croppedCanvas.toBlob(function (blob) {
+            // 创建FormData对象，用于发送数据
+            var formData = new FormData();
+            formData.append('image', blob, 'cropped-image.jpg');
+
+            // 发送请求保存图片
+            fetch('http://127.0.0.1:5000/save_image', {
+                method: 'POST',
+                body: formData
+            })
+                .then(function (response) {
+                    // 处理响应
+                    if (response.ok) {
+                        console.log('Image saved successfully.');
+                    } else {
+                        console.error('Error saving image.');
+                    }
+                })
+                .catch(function (error) {
+                    console.error('Error saving image:', error);
+                });
+        })
+    }
+</script>
+</body>
+
+</html>

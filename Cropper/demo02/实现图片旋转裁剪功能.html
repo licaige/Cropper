@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>图片裁剪工具</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.11/cropper.min.css">
+    <style>
+        img {
+            width: 800px;
+            height: 500px;
+        }
+
+    </style>
+</head>
+<body>
+<div>
+    <img src="https://p1.ssl.qhimg.com/t019228fc2ed5df1aa8.jpg" id="image">
+</div>
+<button onclick="split()"> 裁剪 </button>
+<button onclick="rotate(-10)">逆时针旋转</button>
+<button onclick="rotate(10)">顺时针旋转</button>
+<div>
+    <img id="cropped-result">
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.11/cropper.min.js"></script>
+<script>
+    var image = document.getElementById('image');
+    var cropper = new Cropper(image, {});
+
+    function split() {
+        var croppedData = cropper.getCroppedCanvas().toDataURL('image/jpeg');
+        var resultElement = document.getElementById('cropped-result');
+        resultElement.src = croppedData;
+    }
+
+    function rotate(degrees) {
+        cropper.rotate(degrees);
+    }
+</script>
+</body>
+</html>
