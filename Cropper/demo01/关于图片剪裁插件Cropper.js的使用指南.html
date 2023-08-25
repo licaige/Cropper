@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>关于图片剪裁插件Cropper.js的使用指南</title>
+</head>
+<link rel="stylesheet" href="https://cdn.bootcss.com/cropperjs/2.0.0-alpha.1/cropper.css">
+<script src="https://cdn.bootcss.com/cropperjs/2.0.0-alpha.1/cropper.js"></script>
+<script src="https://cdn.bootcss.com/jquery/3.5.0/jquery.min.js"></script>
+<body>
+<label title="上传图片" for="chooseImg" class="l-btn choose-btn">
+    <input type="file" accept="image/jpg,image/jpeg,image/png" name="file" id="chooseImg" class="hidden" onchange="selectImg(this)" />
+    选择图片
+</label>
+<div class="str">
+    <img id="fileImg" src="" width="100%">
+</div>
+<!--图片裁剪框 start-->
+<div style="display: none" class="tailoring-container">
+    <div class="black-cloth" onclick="closeTailor(this)"></div>
+    <div class="tailoring-content">
+        <div class="tailoring-content-one">
+            <div class="close-tailoring" onclick="closeTailor(this)">×</div>
+        </div>
+        <div class="tailoring-content-two">
+            <div class="tailoring-box-parcel">
+                <img id="tailoringImg">
+            </div>
+            <div class="preview-box-parcel">
+                <p>图片预览：</p>
+                <div class="square previewImg"></div>
+                <!--  <div class="circular previewImg"></div>-->
+            </div>
+        </div>
+        <div class="tailoring-content-three">
+            <button class="l-btn cropper-reset-btn">复位</button>
+            <button class="l-btn cropper-rotate-btn">旋转</button>
+            <button class="l-btn cropper-scaleX-btn">换向</button>
+            <button class="l-btn cropper-enlarge-btn">放大</button>
+            <button class="l-btn cropper-narrow-btn">缩小</button>
+            <button class="l-btn sureCut" id="sureCut">确定</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    var cropper =  new Cropper($('#tailoringImg')[0],{
+        aspectRatio: 1 / 1,// 默认比例
+        preview: '.previewImg',// 预览视图
+        guides: false, // 裁剪框的虚线(九宫格)
+        autoCropArea: 0.5, // 0-1之间的数值，定义自动剪裁区域的大小，默认0.8
+        movable: false, // 是否允许移动图片
+        dragCrop: true, // 是否允许移除当前的剪裁框，并通过拖动来新建一个剪裁框区域
+        movable: true, // 是否允许移动剪裁框
+        resizable: true, // 是否允许改变裁剪框的大小
+        scalable:false, //是否可以缩放图片
+        zoomable: true, // 是否允许缩放图片大小
+        mouseWheelZoom: false, // 是否允许通过鼠标滚轮来缩放图片
+        touchDragZoom: false, // 是否允许通过触摸移动来缩放图片
+        rotatable: true, // 是否允许旋转图片
+        crop: function (e) {
+            let cas = cropper.getCroppedCanvas();// 获取被裁剪后的canvas
+            let base64 = cas.toDataURL('image/jpeg'); // 转换为base64
+            $("#finalImg").prop("src", base64);// 显示图片
+            // 输出结果数据裁剪图像。
+        }
+    });
+    // 选择文件触发事件
+    function selectImg(file) {
+        //文件为空，返回
+        if (!file.files || !file.files[0]) {
+            return;
+        }
+        $(".tailoring-container").toggle();
+        var reader = new FileReader();
+        reader.onload = function (evt) {
+            console.log(evt,cropper,'./.evt.target.result')
+            var replaceSrc = evt.target.result;
+            // 更换cropper的图片
+            cropper.replace(replaceSrc, false);// 默认false，适应高度，不失真
+        }
+        reader.readAsDataURL(file.files[0]);
+    }
+    // 旋转
+    $(".cropper-rotate-btn").on("click", function () {
+        cropper.rotate(45);
+    });
+    // 复位
+    $(".cropper-reset-btn").on("click", function () {
+        cropper.reset();
+    });
+    // 放大
+    $('.cropper-enlarge-btn').on('click',function(){
+        console.log(cropper,'cropper---enlarge')
+        cropper.zoom(2);
+    })
+    // 缩小
+    $('.cropper-narrow-btn').on('click',function(){
+        console.log(cropper,'cropper---narrow')
+        cropper.zoom(-2);
+    })
+    // 换向
+    var flagX = true;
+    $(".cropper-scaleX-btn").on("click", function () {
+        if (flagX) {
+            cropper.scaleX(-1);
+            flagX = false;
+        } else {
+            cropper.scaleX(1);
+            flagX = true;
+        }
+        flagX != flagX;
+    });
+    // 关闭裁剪框
+    function closeTailor() {
+        $(".tailoring-container").toggle();
+    }
+
+</script>
+</body>
+</html>
